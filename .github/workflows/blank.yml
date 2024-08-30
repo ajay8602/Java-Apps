@@ -40,7 +40,7 @@ jobs:
 
     # Step 6: Build the Docker image
     - name: Build Docker image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/java-app:latest -f ../../Dockerfile
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/java-app:latest -f ../../Dockerfile ../../
 
     # Step 7: Push the Docker image to Docker Hub
     - name: Push Docker image to Docker Hub
