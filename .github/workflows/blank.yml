@@ -7,13 +7,11 @@ on:
   pull_request:
     branches:
       - master
-
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     # Step 1: Checkout the code
     - name: Checkout code
@@ -30,32 +28,32 @@ jobs:
     - name: Build with Maven
       run: mvn clean package
 
-    
-    # Step 5: Log in to Docker Hub
+    # Step 4: Log in to Docker Hub
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Step 6: Build the Docker image
+    # Step 5: Build the Docker image
     - name: Build Docker image
       run: docker build . -t ${{ secrets.DOCKER_USERNAME }}/java-app:latest
 
-    # Step 7: Push the Docker image to Docker Hub
+    # Step 6: Push the Docker image to Docker Hub
     - name: Push Docker image to Docker Hub
       run: docker push ${{ secrets.DOCKER_USERNAME }}/java-app:latest
 
-deploy:
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
-
-    # Step 5: Set up kubectl
+    steps:
+    # Step 1: Set up kubectl
     - name: Set up kubectl
       uses: azure/setup-kubectl@v2
       with:
         version: '1.28.0'  # Specify the version of kubectl you need
 
-    # Step 6: Configure Kubernetes context
+    # Step 2: Configure Kubernetes context
     - name: Configure Kubernetes context
       run: |
         kubectl config set-cluster my-cluster --server=${{ secrets.K8S_SERVER }} --certificate-authority=<(echo "${{ secrets.K8S_CA_CERT }}" | base64 -d)
@@ -63,8 +61,8 @@ deploy:
         kubectl config set-context my-context --cluster=my-cluster --user=my-user --namespace=default
         kubectl config use-context my-context
 
-    # Step 7: Deploy to Kubernetes
+    # Step 3: Deploy to Kubernetes
     - name: Deploy to Kubernetes
       run: |
-        kubectl set image deployment/my-deployment my-container=${{ secrets.DOCKER_USERNAME }}/my-java-app:latest
+        kubectl set image deployment/my-deployment my-container=${{ secrets.DOCKER_USERNAME }}/java-app:latest
         kubectl rollout status deployment/my-deployment
