@@ -49,7 +49,7 @@ jobs:
     steps:
     # Step 1: Set up kubectl
     - name: Set up kubectl
-      uses: azure/setup-kubectl@v2
+      uses: azure/setup-kubectl@v1
       with:
         version: '1.28.0'  # Specify the version of kubectl you need
 
