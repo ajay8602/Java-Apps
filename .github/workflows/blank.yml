@@ -46,6 +46,10 @@ jobs:
     - name: Push Docker image to Docker Hub
       run: docker push ${{ secrets.DOCKER_USERNAME }}/java-app:latest
 
+deploy:
+    runs-on: ubuntu-latest
+
+    # Step 5: Set up kubectl
     - name: Set up kubectl
       uses: azure/setup-kubectl@v2
       with:
@@ -62,5 +66,5 @@ jobs:
     # Step 7: Deploy to Kubernetes
     - name: Deploy to Kubernetes
       run: |
-        kubectl set image deployment/my-deployment my-container=${{ secrets.DOCKER_USERNAME }}/java-app:latest
+        kubectl set image deployment/my-deployment my-container=${{ secrets.DOCKER_USERNAME }}/my-java-app:latest
         kubectl rollout status deployment/my-deployment
