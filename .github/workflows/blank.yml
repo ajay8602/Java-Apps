@@ -47,11 +47,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    # Step 1: Set up kubectl
-    - name: Set up kubectl
-      uses: bitnami-labs/setup-kubectl@v1
-      with:
-        version: '1.28.0'
+    # Step 1: Install kubectl manually
+    - name: Install kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        sudo mv kubectl /usr/local/bin/
 
     # Step 2: Configure Kubernetes context
     - name: Configure Kubernetes context
