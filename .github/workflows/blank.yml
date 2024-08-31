@@ -49,9 +49,9 @@ jobs:
     steps:
     # Step 1: Set up kubectl
     - name: Set up kubectl
-       uses: actions-hub/kubectl@v1
-       with:
-         version: '1.28.0'
+      uses: bitnami-labs/setup-kubectl@v1
+      with:
+        version: '1.28.0'
 
     # Step 2: Configure Kubernetes context
     - name: Configure Kubernetes context
