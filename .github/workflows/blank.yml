@@ -1,4 +1,4 @@
-name: CI Pipeline for Java Application
+name: CI and CD Pipeline for Java Application
 
 on:
   push:
@@ -45,3 +45,22 @@ jobs:
     # Step 7: Push the Docker image to Docker Hub
     - name: Push Docker image to Docker Hub
       run: docker push ${{ secrets.DOCKER_USERNAME }}/java-app:latest
+
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v2
+      with:
+        version: '1.28.0'  # Specify the version of kubectl you need
+
+    # Step 6: Configure Kubernetes context
+    - name: Configure Kubernetes context
+      run: |
+        kubectl config set-cluster my-cluster --server=${{ secrets.K8S_SERVER }} --certificate-authority=<(echo "${{ secrets.K8S_CA_CERT }}" | base64 -d)
+        kubectl config set-credentials my-user --token=${{ secrets.K8S_TOKEN }}
+        kubectl config set-context my-context --cluster=my-cluster --user=my-user --namespace=default
+        kubectl config use-context my-context
+
+    # Step 7: Deploy to Kubernetes
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl set image deployment/my-deployment my-container=${{ secrets.DOCKER_USERNAME }}/java-app:latest
+        kubectl rollout status deployment/my-deployment
